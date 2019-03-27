@@ -4,7 +4,7 @@ using Lab1_C.tests;
 
 namespace Lab1_C
 {
-    internal class Program
+    internal static class Program
     {
         public static void Main(string[] _)
         {

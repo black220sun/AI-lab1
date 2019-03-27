@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 
 namespace Lab1_C.tests
@@ -14,7 +16,7 @@ namespace Lab1_C.tests
                 BinaryConvertor.IntsToBinaryString(0, 0, 0, 0),
                 BinaryConvertor.IntsToBinaryString(1, 0, 1, 0),
                 BinaryConvertor.IntsToBinaryString(1, 1, 0, 1)
-            };
+            }.ToList();
             var expected = candidates[1];
             var result = new Lab1_C.Algorithm().Tournament(new Sphere(), candidates, 4);
             
@@ -29,7 +31,7 @@ namespace Lab1_C.tests
                 BinaryConvertor.IntsToBinaryString(12, 1, 10, 11),
                 BinaryConvertor.IntsToBinaryString(10, 0, 13, 0),
                 BinaryConvertor.IntsToBinaryString(8, 8, 0, 5)
-            };
+            }.ToList();
             var algorithm = new Lab1_C.Algorithm();
             
             for (var i = 0; i < 100; ++i)
@@ -58,9 +60,10 @@ namespace Lab1_C.tests
         {
             const string x = "000";
             const string y = "010";
+            var expected = new KeyValuePair<string, string>(y, x);
             var result = new Lab1_C.Algorithm(new AlgorithmOptions(strictCrossover: false)).Crossover(x, y);
             
-            Assert.AreEqual(y, result);
+            Assert.AreEqual(expected, result);
         }
 
         [Test]
@@ -73,8 +76,11 @@ namespace Lab1_C.tests
 
             for (var i = 0; i < 100; ++i)
             {
-                var result = algorithm.Crossover(x, y).Length;
-                Assert.AreEqual(expected, result);
+                var result1 = algorithm.Crossover(x, y).Key.Length;
+                var result2 = algorithm.Crossover(x, y).Value.Length;
+                
+                Assert.AreEqual(expected, result1);
+                Assert.AreEqual(expected, result2);
             }
         }
     }

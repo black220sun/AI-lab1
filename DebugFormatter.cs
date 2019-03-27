@@ -1,16 +1,17 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Lab1_C
 {
     public interface IDebugFormatter
     {
-        void Print(string[] population, Func<string, double> fitnessLambda);
+        void Print(IEnumerable<string> population, Func<string, double> fitnessLambda);
     }
 
     class VoidDebugFormatter : IDebugFormatter
     {
-        public void Print(string[] population, Func<string, double> fitnessLambda) { }
+        public void Print(IEnumerable<string> population, Func<string, double> fitnessLambda) { }
     }
     
     public class SimpleDebugFormatter : IDebugFormatter
@@ -18,7 +19,7 @@ namespace Lab1_C
         private int _cycle;
         private double _lastFitness = int.MaxValue;
         
-        public void Print(string[] population, Func<string, double> fitnessLambda)
+        public void Print(IEnumerable<string> population, Func<string, double> fitnessLambda)
         {
             var values = population.Select(fitnessLambda).ToArray();
             var average = values.Average();
@@ -35,7 +36,7 @@ namespace Lab1_C
         private int _cycle;
         private double _lastFitness = int.MaxValue;
 
-        public void Print(string[] population, Func<string, double> fitnessLambda)
+        public void Print(IEnumerable<string> population, Func<string, double> fitnessLambda)
         {
             Console.WriteLine($"CYCLE {_cycle}");
             var total = 0d;
@@ -51,7 +52,7 @@ namespace Lab1_C
                 Console.WriteLine($": {fitness}");
             }
 
-            var average = total / population.Length;
+            var average = total / population.Count();
             var diff = (average - _lastFitness) / _lastFitness * 100;
             Console.WriteLine($"Average fitness: {average} ({diff}%)\n");
             _lastFitness = average;

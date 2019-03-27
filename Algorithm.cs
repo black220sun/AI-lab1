@@ -92,20 +92,20 @@ namespace Lab1_C
             }
         }
 
-        public string Tournament(IFunction function, string[] candidates, int amount = 2)
+        public string Tournament(IFunction function, List<string> candidates, int amount = 2)
         {
-            var size = candidates.Length;
+            var size = candidates.Count;
             if (size == 0)
                 throw new InvalidDataException("No candidates passed");
             if (amount > size)
                 amount = size;
-            var indexes = DistinctValues(amount, candidates.Length);
+            var indexes = DistinctValues(amount, size);
             var winnerIndex = indexes.Select(index => new Pair(index, Fitness(function, candidates[index])))
                 .Min().First;
             return candidates[winnerIndex];
         }
 
-        public string Crossover(string x, string y)
+        public KeyValuePair<string, string> Crossover(string x, string y)
         {
             var size = x.Length;
             if (size != y.Length)
@@ -116,19 +116,22 @@ namespace Lab1_C
             {
                 var firstIndex = _random.Next(1, size - 2);
                 var secondIndex = _random.Next(1, size - firstIndex - 1);
-                var result = x.Substring(0, firstIndex) +
+                var first = x.Substring(0, firstIndex) +
                        y.Substring(firstIndex, secondIndex) +
                        x.Substring(secondIndex + firstIndex);
+                var second = y.Substring(0, firstIndex) +
+                            x.Substring(firstIndex, secondIndex) +
+                            y.Substring(secondIndex + firstIndex);
                 if (_options.StrictCrossover)
                 {
-                    if (IsValid(result))
+                    if (IsValid(first) && IsValid(second))
                     {
-                        return result;
+                        return new KeyValuePair<string, string>(first, second);
                     }
                 }
                 else
                 {
-                    return result;
+                    return new KeyValuePair<string, string>(first, second);
                 }
             }
         }
@@ -137,7 +140,7 @@ namespace Lab1_C
         {
             var population = Enumerable.Range(0, _options.PopulationSize)
                 .Select(_ => GenerateDecision(_options.LowerBound, _options.UpperBound, _options.Arity))
-                .ToArray();
+                .ToList();
             _options.DebugFormatter.Print(population, s => Fitness(function, s));
             var expected = _options.ExpectedValue;
             string result;
@@ -151,22 +154,20 @@ namespace Lab1_C
             return result;
         }
 
-        private string[] Crossover(IFunction function, string[] population)
+        private List<string> Crossover(IFunction function, List<string> population)
         {
-            var size = population.Length;
-            var results = new string[size];
-            for (var i = 0; i < size; ++i)
+            var size = population.Count;
+            var results = new List<string>(population.Count);
+            for (var i = 0; i < size / 2; ++i)
             {
                 var first = Tournament(function, population, _options.TournamentSize);
-                string second;
-                //do
-                //{
-                    second = Tournament(function, population, _options.TournamentSize);
-                //} while (second == first);
+                var second = Tournament(function, population, _options.TournamentSize);
 
                 var result = Crossover(first, second);
-                var mutated = _options.Mutator.Mutate(result, _options.LowerBound, _options.UpperBound);
-                results[i] = mutated;
+                var mutated1 = _options.Mutator.Mutate(result.Key, _options.LowerBound, _options.UpperBound);
+                var mutated2 = _options.Mutator.Mutate(result.Value, _options.LowerBound, _options.UpperBound);
+                results.Add(mutated1);
+                results.Add(mutated2);
             }
 
             return results;
@@ -189,7 +190,7 @@ namespace Lab1_C
             int arity = 50,
             int lowerBound = -10,
             int upperBound = 10,
-            int populationSize = 25,
+            int populationSize = 26,
             int tournamentSize = 3,
             bool strictCrossover = true,
             IMutator mutator = null,
