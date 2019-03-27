@@ -47,15 +47,11 @@ namespace Lab1_C
             ));
             Compute<Griewank>(new AlgorithmOptions(
                 lowerBound: -600, 
-                upperBound: 600,
-                populationSize: 90,
-                tournamentSize: 12,
-                mutator: new RepeatableMutator(38, 0.04)
+                upperBound: 600
             ));
             Compute<Rastrigin>(new AlgorithmOptions(
                 lowerBound: -5, 
                 upperBound: 5,
-                mutator: new RepeatableMutator(10, 0.02),
                 arity: 30
             ));
             Compute<Rosenbrock>(new AlgorithmOptions(
