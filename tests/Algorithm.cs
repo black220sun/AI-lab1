@@ -45,13 +45,29 @@ namespace Lab1_C.tests
         [Test]
         public void TestMutate()
         {
-            var input = BinaryConvertor.IntsToBinaryString(4, -123, 7);
-            var expected = input.Length;
-            var algorithm = new Lab1_C.Algorithm();
-            for (var i = 1; i < 20; ++i)
+            var input = BinaryConvertor.IntsToBinaryString(4, -123, 7, 7, 9, 0, -2);
+            var inputLength = input.Length;
+            var mutationImpls = new IMutator[]
             {
-                var result = algorithm.Mutate(input).Length;
-                Assert.AreEqual(expected, result);
+                new SimpleMutator(),
+                new RepeatableMutator(1, 1),
+                new RepeatableMutator(15, 0.7),
+                new AdaptiveMutator(1, 1),
+                new AdaptiveMutator(17, 1, 1, 0.5, 7),
+                new HackMutator(1, 1),
+                new HackMutator(10, 0.45)
+            };
+
+            foreach (var mutator in mutationImpls)
+            {
+                var algorithm = new Lab1_C.Algorithm(new AlgorithmOptions(
+                    lowerBound: -100, // so random value won't ever match `-123`
+                    mutator: mutator
+                    ));
+                var result = algorithm.Mutate(input);
+
+                Assert.AreNotEqual(input, result);
+                Assert.AreEqual(inputLength, result.Length);
             }
         }
 
