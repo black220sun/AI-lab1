@@ -41,7 +41,8 @@ namespace Lab1_C
             Compute<Ackley>(new AlgorithmOptions(
                 lowerBound: -32, 
                 upperBound: 32,
-                expectedValue: 4.44089209850063E-16,
+                // something like -4.44e-16
+                expectedValue: new Ackley().Compute(Enumerable.Range(0, 20).Select(v => 0).ToArray()),
                 arity: 20
             ));
             Compute<Griewank>(new AlgorithmOptions(
@@ -49,14 +50,12 @@ namespace Lab1_C
                 upperBound: 600,
                 populationSize: 90,
                 tournamentSize: 12,
-                mutationTimes: 38,
-                mutationChance: 0.04
+                mutator: new RepeatableMutator(38, 0.04)
             ));
             Compute<Rastrigin>(new AlgorithmOptions(
                 lowerBound: -5, 
                 upperBound: 5,
-                mutationTimes: 10,
-                mutationChance: 0.02,
+                mutator: new RepeatableMutator(10, 0.02),
                 arity: 30
             ));
             Compute<Rosenbrock>(new AlgorithmOptions(

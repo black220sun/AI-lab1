@@ -165,14 +165,8 @@ namespace Lab1_C
                 //} while (second == first);
 
                 var result = Crossover(first, second);
-                for (var mutation = 0; mutation < _options.MutationTimes; ++mutation)
-                {
-                    if (_random.NextDouble() < _options.MutationChance)
-                    {
-                        result = Mutate(result);
-                    }
-                }
-                results[i] = result;
+                var mutated = _options.Mutator.Mutate(result, _options.LowerBound, _options.UpperBound);
+                results[i] = mutated;
             }
 
             return results;
@@ -186,8 +180,7 @@ namespace Lab1_C
         internal int UpperBound { get; }
         internal int PopulationSize { get; }
         internal int TournamentSize { get; }
-        internal double MutationChance { get; }
-        internal int MutationTimes { get; }
+        internal IMutator Mutator { get; }
         internal bool StrictCrossover { get; }
         internal double ExpectedValue { get; }
         internal IDebugFormatter DebugFormatter { get; }
@@ -198,9 +191,8 @@ namespace Lab1_C
             int upperBound = 10,
             int populationSize = 25,
             int tournamentSize = 3,
-            double mutationChance = 0.015,
-            int mutationTimes = 20,
             bool strictCrossover = true,
+            IMutator mutator = null,
             IDebugFormatter debugFormatter = null,
             double expectedValue = 0d
         )
@@ -210,11 +202,10 @@ namespace Lab1_C
             UpperBound = upperBound;
             PopulationSize = populationSize;
             TournamentSize = tournamentSize;
-            MutationChance = mutationChance;
-            MutationTimes = mutationTimes;
             StrictCrossover = strictCrossover;
-            ExpectedValue = expectedValue;
+            Mutator = mutator ?? new RepeatableMutator(20, 0.015);
             DebugFormatter = debugFormatter ?? new SimpleDebugFormatter();
+            ExpectedValue = expectedValue;
         }
     }
 }
