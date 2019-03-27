@@ -187,11 +187,13 @@ namespace Lab1_C
         internal IDebugFormatter DebugFormatter { get; }
 
         public AlgorithmOptions(
+            // input array size
             int arity = 50,
             int lowerBound = -10,
             int upperBound = 10,
             int populationSize = 200,
             int tournamentSize = 3,
+            // `false` may speed-up computation but generate out-of-range value
             bool strictCrossover = true,
             IMutator mutator = null,
             IDebugFormatter debugFormatter = null,
