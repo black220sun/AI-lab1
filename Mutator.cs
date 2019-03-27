@@ -7,6 +7,14 @@ namespace Lab1_C
         string Mutate(string input, int lowerBound, int upperBound);
     }
 
+    public class VoidMutator : IMutator
+    {
+        public string Mutate(string input, int lowerBound, int upperBound)
+        {
+            return input;
+        }
+    }
+
     public class SimpleMutator : IMutator
     {
         private readonly Random _random = new Random();
@@ -115,6 +123,44 @@ namespace Lab1_C
             }
 
             ++_called;
+
+            return result;
+        }
+    }
+
+    public class HackMutator : IMutator
+    {
+        private readonly int _times;
+        private readonly double _chance;
+        private readonly Random _random;
+
+        public HackMutator(int times, double chance)
+        {
+            _times = times;
+            _chance = chance;
+            _random = new Random();
+        }
+
+        // With such approach best decision will be randomized a bit faster
+        public string Mutate(string input, int lowerBound, int upperBound)
+        {
+            var result = input;
+            for (var i = 0; i < _times; ++i)
+            {
+                if (!(_random.NextDouble() <= _chance))
+                    continue;
+                
+                var index = _random.Next(input.Length / BinaryConvertor.IntBytes);
+                var replaceFrom = index * BinaryConvertor.IntBytes;
+                var replaceTo = replaceFrom + BinaryConvertor.IntBytes;
+                var inner = input.Substring(replaceFrom, BinaryConvertor.IntBytes);
+                var oldValue = Math.Abs(BinaryConvertor.BinaryStringToInts(inner)[0]);
+                var newValue = _random.Next(-oldValue, oldValue);
+
+                result = input.Substring(0, replaceFrom) +
+                         BinaryConvertor.IntsToBinaryString(newValue) +
+                         input.Substring(replaceTo);
+            }
 
             return result;
         }

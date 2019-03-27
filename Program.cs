@@ -36,7 +36,8 @@ namespace Lab1_C
 
             Compute<Sphere>(new AlgorithmOptions(
                 lowerBound: -100, 
-                upperBound: 100
+                upperBound: 100,
+                mutator: new HackMutator(20, 0.015)
             ));
             Compute<Ackley>(new AlgorithmOptions(
                 lowerBound: -32, 
@@ -47,7 +48,8 @@ namespace Lab1_C
             ));
             Compute<Griewank>(new AlgorithmOptions(
                 lowerBound: -600, 
-                upperBound: 600
+                upperBound: 600,
+                mutator: new HackMutator(20, 0.015)
             ));
             Compute<Rastrigin>(new AlgorithmOptions(
                 lowerBound: -5, 
