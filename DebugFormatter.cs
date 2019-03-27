@@ -9,9 +9,30 @@ namespace Lab1_C
         void Print(IEnumerable<string> population, Func<string, double> fitnessLambda);
     }
 
-    class VoidDebugFormatter : IDebugFormatter
+    public class VoidDebugFormatter : IDebugFormatter
     {
         public void Print(IEnumerable<string> population, Func<string, double> fitnessLambda) { }
+    }
+
+    public class CycleCounter : IDebugFormatter
+    {
+        private int _cycle;
+        private double _expected;
+
+        public CycleCounter(double expected)
+        {
+            _expected = expected;
+        }
+
+        public void Print(IEnumerable<string> population, Func<string, double> fitnessLambda)
+        {
+            if (population.Select(fitnessLambda).Min() <= _expected)
+            {
+                Console.WriteLine($"{_cycle} cycles");
+            }
+
+            ++_cycle;
+        }
     }
     
     public class SimpleDebugFormatter : IDebugFormatter
@@ -25,7 +46,7 @@ namespace Lab1_C
             var average = values.Average();
             var best = values.Min();
             var diff = (average - _lastFitness) / _lastFitness * 100;
-            Console.WriteLine($"CYCLE {_cycle}: average fitness = {average} ({diff}%), best: {best}\n");
+            Console.WriteLine($"CYCLE {_cycle}: average fitness = {average} ({diff}%), best: {best}");
             _lastFitness = average;
             ++_cycle;
         }

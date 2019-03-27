@@ -190,8 +190,8 @@ namespace Lab1_C
             int arity = 50,
             int lowerBound = -10,
             int upperBound = 10,
-            int populationSize = 100,
-            int tournamentSize = 9,
+            int populationSize = 200,
+            int tournamentSize = 3,
             bool strictCrossover = true,
             IMutator mutator = null,
             IDebugFormatter debugFormatter = null,
@@ -205,7 +205,7 @@ namespace Lab1_C
             TournamentSize = tournamentSize;
             StrictCrossover = strictCrossover;
             Mutator = mutator ?? new RepeatableMutator(20, 0.015);
-            DebugFormatter = debugFormatter ?? new SimpleDebugFormatter();
+            DebugFormatter = debugFormatter ?? new CycleCounter(expectedValue);
             ExpectedValue = expectedValue;
         }
     }
